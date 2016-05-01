@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.mda.quintans.pt" targetNamespace="http://www.mda.quintans.pt" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="mappings">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="mapping" type="mapping" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<!-- model var type -->
+	<xs:complexType name="mapping">
+		<xs:attribute name="model" use="required"/>
+		<xs:attribute name="domain" use="required"/>
+		<xs:attribute name="type"/>
+		<xs:attribute name="instance"/>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by xpto (site) -->
+<xs:schema targetNamespace="http://www.mda.quintans.pt" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.mda.quintans.pt">
+	<xs:element name="workflow">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="transformation" type="transformation"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="transformation">
+		<xs:sequence>
+			<xs:element name="transform" type="transform" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="transform">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="map" type="mapType" minOccurs="0"/>
+			<xs:element name="list" type="listType" minOccurs="0"/>
+		</xs:choice>
+		<xs:attribute name="type" use="required"/>
+		<xs:attribute name="description"/>
+	</xs:complexType>
+	<xs:complexType name="mapType">
+		<xs:attribute name="name" use="required"/>
+		<xs:attribute name="value" use="required"/>
+		<xs:attribute name="save" type="xs:boolean" default="false"/>
+	</xs:complexType>
+	<xs:complexType name="listType">
+		<xs:sequence>
+			<xs:element name="map" type="mapType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="name" use="required"/>
+		<xs:attribute name="save" type="xs:boolean" default="false"/>
+	</xs:complexType>
+</xs:schema>
