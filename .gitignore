@@ -5,6 +5,4 @@
 
 .settings/*
 
-gen.bat
-
-target/*
+/target/
