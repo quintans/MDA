@@ -3,6 +3,12 @@ package pt.quintans.mda;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import pt.quintans.mda.core.WorkerStore;
 
 public class StartUp {
@@ -11,39 +17,32 @@ public class StartUp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if(args == null || args.length == 0)
-			throw new RuntimeException("no minimo � necess�rio passar o caminho do workflow");
-		
-		boolean quiet = false;
-		int cnt = 0;
-		for(String arg : args){
-			if(arg.startsWith("/")){
-				if("/Q".equals(arg.toUpperCase())){
-					quiet = true;
-					cnt++;
-				} 
-			}else
-				break;
-		}
+		Options options = new Options();
 
-		String subnamespace = null;
-		String workflowFile = null;
-		if(args.length > cnt)
-			workflowFile = args[cnt];
-		
-		if(args.length > cnt + 1)
-			subnamespace = args[cnt + 1];
+		options.addRequiredOption("w", "workflow", true, "workflow path relative to the working directory");
+		options.addOption("q", "quiet", false, "produces fewer logs");
+		options.addRequiredOption("sn", "subnamespace", true, "subnamespace");
 
+		CommandLineParser parser = new DefaultParser();
 		try {
+			// parse the command line arguments
+			CommandLine line = parser.parse(options, args);
+			boolean quiet = line.hasOption("q");
+
+			String subnamespace = line.getOptionValue("sn");
+			String workflowFile = line.getOptionValue("w");
+
 			WorkerStore.get().doIt(workflowFile, subnamespace, quiet);
-			System.out.println("Geração terminada...");
+			System.out.println("Generation ended...");
+		} catch (ParseException exp) {
+			// oops, something went wrong
+			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			ByteArrayOutputStream ba = new ByteArrayOutputStream();
 			e.printStackTrace(new PrintStream(ba));
-			//e.printStackTrace();
-			System.out.println(ba.toString());
+			System.err.println(ba.toString());
 		}
+
 	}
 
 }

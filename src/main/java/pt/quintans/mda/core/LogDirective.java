@@ -15,7 +15,6 @@ public class LogDirective implements TemplateDirectiveModel {
 	public LogDirective(){
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
     public void execute(Environment env,
             Map params, TemplateModel[] loopVars,

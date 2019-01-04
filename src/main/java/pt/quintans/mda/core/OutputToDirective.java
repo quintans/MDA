@@ -21,7 +21,6 @@ public class OutputToDirective implements TemplateDirectiveModel {
 		this.root = root;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
     public void execute(Environment env,
             Map params, TemplateModel[] loopVars,

@@ -61,7 +61,6 @@ public class DbNameHash implements TemplateMethodModel {
 	}
 	
 	    
-    @SuppressWarnings("unchecked")
 	public TemplateModel exec(List args) throws TemplateModelException {
         if (args.size() != 2) {
             throw new TemplateModelException("Argumentos errados");
