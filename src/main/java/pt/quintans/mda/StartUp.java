@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -21,7 +22,7 @@ public class StartUp {
 
 		options.addRequiredOption("w", "workflow", true, "workflow path relative to the working directory");
 		options.addOption("q", "quiet", false, "produces fewer logs");
-		options.addRequiredOption("sn", "subnamespace", true, "subnamespace");
+		options.addOption("sn", "subnamespace", true, "subnamespace");
 
 		CommandLineParser parser = new DefaultParser();
 		try {
@@ -37,6 +38,8 @@ public class StartUp {
 		} catch (ParseException exp) {
 			// oops, something went wrong
 			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp( "StartUp", options );
 		} catch (Exception e) {
 			ByteArrayOutputStream ba = new ByteArrayOutputStream();
 			e.printStackTrace(new PrintStream(ba));

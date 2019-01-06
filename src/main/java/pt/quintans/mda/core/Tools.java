@@ -188,13 +188,17 @@ public class Tools {
 	}
 
 	public static String processTemplate(Map<String, Object> map, String templateStr){
-		try {
-			Template t = new Template("abstracto", new StringReader(templateStr), new Configuration());
-			Writer genx = new StringWriter();
-			t.process(map, genx);
-			return genx.toString();			
-		} catch (Exception e) {
-			throw new RuntimeException(String.format("Ocorreu um erro inesperado durante o processamento da template '%s'", templateStr), e);
+		if(templateStr.contains("$")) {
+			try {
+				Template t = new Template("abstract", new StringReader(templateStr), new Configuration());
+				Writer genx = new StringWriter();
+				t.process(map, genx);
+				return genx.toString();			
+			} catch (Exception e) {
+				throw new RuntimeException(String.format("There was an error while processing the template '%s'", templateStr), e);
+			}
+		} else {
+			return templateStr;
 		}
 	}
 	

@@ -22,6 +22,9 @@ public class PipelineKeys {
 	public static final String DBHASH = "dbNameHash"; 
 	
 	public static final String SUBLISTITEM = "sublistItem"; 
+	public static final String GROUP_BY = "groupby"; 
+	public static final String GROUP = "Group";
+	public static final String GROUPKEY = "group";
 	
-	public static final String DESTINATION_FOLDER = "destinationFolder";	
+	public static final String DESTINATION_FILE = "destinationFile";	
 }

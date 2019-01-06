@@ -80,29 +80,25 @@ public class AllModel2Text extends Model2TextAbstract {
 		Work wrk = WorkerStore.get();
 		Map<String, Object> pipeline = wrk.getPipeline();
 
-		String destinationFolder = Tools.processTemplate(pipeline, getDestination());
-		destinationFolder = Tools.applyKeys(destinationFolder, properties);
-
-		String destinationFile = Tools.processTemplate(pipeline, getFilename());
+		String destinationFile = Tools.processTemplate(pipeline, getDestination());
 		destinationFile = Tools.applyKeys(destinationFile, properties);
 
-		putInPipe(PipelineKeys.DESTINATION_FOLDER, destinationFolder);
+		putInPipe(PipelineKeys.DESTINATION_FILE, destinationFile);
 
 		if (ignoreNamespace == null) {
-			String dest = destinationFolder + "/" + destinationFile;
 			// para opercoes de append so apaga que sejam anteriores ao arranque da geracao
-			if (getCopy().equals(CopyMode.APPEND)) {
-				File fx = new File(wrk.getWorkflowFolder() + File.separator + dest);
+			if (getCopyMode().equals(CopyMode.APPEND)) {
+				File fx = new File(wrk.getWorkflowFolder() + File.separator + destinationFile);
 				if (fx.lastModified() < wrk.getStartupTime().getTime()) {
 					if (!wrk.isQuiet())
-						System.out.println(String.format("A apagar %s", dest));
+						System.out.println(String.format("A apagar %s", destinationFile));
 					fx.delete();
 				}
 			}
 
-			if (dumpToFile(destinationFolder, destinationFile) && !wrk.isQuiet())
-				System.out.println(String.format("A %s <<%s>> %s [%s] => %s/%s", getCopy().equals(CopyMode.APPEND) ? "concatenar"
-						: "gerar", getStereotype(), objectName, getTemplate(), destinationFolder, destinationFile));
+			if (dumpToFile(destinationFile) && !wrk.isQuiet())
+				System.out.println(String.format("A %s <<%s>> %s [%s] => %s", getCopyMode().equals(CopyMode.APPEND) ? "concatenar"
+						: "gerar", getStereotype(), objectName, getTemplate(), destinationFile));
 		} else if (!wrk.isQuiet()) {
 			System.out.println(String.format("A ignorar %s <<%s>>: nao esta no subnamespace \"%s\"", objectName,
 					getStereotype(), ignoreNamespace));

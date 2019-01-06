@@ -1,6 +1,8 @@
 package pt.quintans.mda.custom;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,18 +17,42 @@ public class AllInOneM2T extends Model2TextAbstract {
 	public void transform(List<Object> mappings) {
 		loadMapping(mappings);
 		prepare();
-		
+	    
+	    // create groups
+	    String groupby = getOptional(PipelineKeys.GROUP_BY);
+	    if(groupby != null) {
+	    	Map<Object, List<Object>> groups = new LinkedHashMap<>();
+	    	pt.quintans.mda.core.Model allModels[] = getFromPipe(PipelineKeys.ALL_MODELS);
+			for (Object obj : allModels[0].getTransformedObjectList(getStereotype())) {
+				Object groupKey = Tools.eval(obj, groupby);
+				List<Object> group = groups.computeIfAbsent(groupKey, k -> new ArrayList<>());
+				group.add(obj);
+			}
+			for(Map.Entry<Object, List<Object>> entry : groups.entrySet()) {
+				putInPipe(PipelineKeys.GROUP, entry.getValue());
+				putInPipe(PipelineKeys.GROUPKEY, entry.getKey());
+				dump();
+				removeFromPipe(PipelineKeys.GROUP);
+			}
+		} else {
+			dump();
+		}
+	    
+	}
+	
+	private void dump() {
 		Work wrk = WorkerStore.get();
-		
+	
 		Map<String, Object> pipeline = wrk.getPipeline();
-		Map<String, Object> properties = new HashMap<String, Object>(pipeline);
+		Map<String, Object> properties = new HashMap<>(pipeline);
 		properties.putAll( getMap());
-		String destinationFolder = Tools.applyKeys(getDestination(), properties);
-		String destinationFile = Tools.applyKeys(getFilename(), properties);
+		String destinationFile = Tools.applyKeys(getDestination(), properties);
+		destinationFile = Tools.processTemplate(properties, destinationFile);
 
-	    putInPipe(PipelineKeys.DESTINATION_FOLDER, destinationFolder);
-
-	    if(dumpToFile(destinationFolder, destinationFile) && !wrk.isQuiet())
-			System.out.println(String.format("A gerar o(s) modelo(s) [%s] => %s/%s", getTemplate(), destinationFolder, destinationFile));  		
+	    putInPipe(PipelineKeys.DESTINATION_FILE, destinationFile);
+		
+	    if(dumpToFile(destinationFile) && !wrk.isQuiet()) {
+			System.out.println(String.format("Generating the model(s) [%s] => %s", getTemplate(), destinationFile));
+	    }
 	}
 }

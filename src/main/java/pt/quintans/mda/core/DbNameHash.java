@@ -14,7 +14,7 @@ public class DbNameHash implements TemplateMethodModel {
 							   "Q",	"R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6"};
 	
 	/**
-	 * Metodo usado para gerar um nome unico e deterministico para texto que exceda determinado tamanho (nome de tabelas)
+	 * Metodo usado parGenerating um nome unico e deterministico para texto que exceda determinado tamanho (nome de tabelas)
 	 * @param input
 	 * @param tamanho
 	 * @return

@@ -37,7 +37,6 @@ public abstract class Model2TextAbstract extends BaseTransformer {
 
 	private String template;
 	private String destination;
-	private String filename;
 	private CopyMode copyMode = CopyMode.OVERWRITE;
 	private String stereotype;
 	private String sublist;
@@ -66,16 +65,8 @@ public abstract class Model2TextAbstract extends BaseTransformer {
 		return template;
 	}
 
-	public CopyMode getCopy() {
-		return copyMode;
-	}
-
 	public String getDestination() {
 		return destination;
-	}
-
-	public String getFilename() {
-		return filename;
 	}
 
 	public CopyMode getCopyMode() {
@@ -92,7 +83,6 @@ public abstract class Model2TextAbstract extends BaseTransformer {
 
 	public static String SUBLIST = "sublist";
 	public static String SUB_MODEL_FOLDER = "subModelFolder";
-	public static String FILENAME = "filename";
 	public static String STEREOTYPE = "stereotype";
 	public static String TEMPLATE = "template";
 	public static String COPY = "copy";
@@ -131,7 +121,6 @@ public abstract class Model2TextAbstract extends BaseTransformer {
 
 		sublist = getOptional(SUBLIST);
 		subModelFolder = getOptional(SUB_MODEL_FOLDER);
-		filename = getMandatory(FILENAME);
 		String copy = getMandatory(COPY);
 		if (CopyType.IGNORE.value().equals(copy))
 			copyMode = CopyMode.IGNORE;
@@ -159,7 +148,7 @@ public abstract class Model2TextAbstract extends BaseTransformer {
 
 	private static final String ENCODING = "UTF8";
 
-	protected boolean dumpToFile(String destinationFolder, String destinationFile) {
+	protected boolean dumpToFile(String destinationFile) {
 		Work work = WorkerStore.get();
 		// new
 		Writer genx = new StringWriter();
@@ -167,33 +156,27 @@ public abstract class Model2TextAbstract extends BaseTransformer {
 		try {
 			Template tpl = getTemplateConfig().getTemplate(template);
 
-			Map<String, Object> properties = new HashMap<String, Object>(work.getPipeline());
+			Map<String, Object> properties = new HashMap<>(work.getPipeline());
 			properties.putAll(getMap());
 
 			tpl.process(properties, genx);
 			String genStr = genx.toString();
 
-			// se o ficheiro resultante for vazio, não o escreve
+			// if file is empty don't write it
 			if ("".equals(genStr.trim()))
 				return false;
 
-			File folderOut = null;
-			if (destinationFolder.startsWith("."))
-				folderOut = new File(work.getWorkflowFolder() + File.separator + destinationFolder);
-			else
-				folderOut = new File(destinationFolder);
-
-			if (!folderOut.exists())
-				folderOut.mkdirs();
-
-			// old
 			String destFile = null;
-			if (destinationFolder.startsWith("."))
-				destFile = work.getWorkflowFolder() + File.separator + destinationFolder + File.separator + destinationFile;
+			if (destinationFile.startsWith("."))
+				destFile = work.getWorkflowFolder() + File.separator + destinationFile;
 			else
-				destFile = destinationFolder + File.separator + destinationFile;
+				destFile = destinationFile;
 
-			File finalDest = new File(destFile);
+			File finalDest = new File(destFile).getCanonicalFile();
+			
+			File folder = finalDest.getParentFile();
+			if (!folder.exists())
+				folder.mkdirs();
 
 			// merge
 			if (copyMode == CopyMode.APPEND) {
@@ -262,7 +245,7 @@ public abstract class Model2TextAbstract extends BaseTransformer {
 					if (produced.equals(sb.toString()))
 						produced = null;
 					else if (!work.isQuiet())
-						System.out.println(String.format("A gerar ficheiro mesclado %s", finalDest));
+						System.out.println(String.format("Generating ficheiro mesclado %s", finalDest));
 
 				} else {
 					produced = genStr;
@@ -286,7 +269,7 @@ public abstract class Model2TextAbstract extends BaseTransformer {
 		} catch (Exception e) {
 			System.err.format("template=%s\n", template);
 			System.err
-					.format("\n----------------------------------------------\n ===> Erro na geracao de %s\n%s\n----------------------------------------------\n\n",
+					.format("\n----------------------------------------------\n ===> Error generating %s\n%s\n----------------------------------------------\n\n",
 							destinationFile, genx);
 			e.printStackTrace();
 			throw new RuntimeException(e);

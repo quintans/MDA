@@ -74,6 +74,10 @@ public abstract class BaseTransformer implements ITransformer {
 		getPipeline().put(name, value);
 	}
 
+	public void removeFromPipe(String name){
+		getPipeline().remove(name);
+	}
+	
 	public void loadMapping(List<Object> mappings){
 		for(Object obj : mappings){
 			if(obj instanceof MapType){
