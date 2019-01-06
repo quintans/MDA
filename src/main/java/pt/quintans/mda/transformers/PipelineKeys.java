@@ -24,7 +24,7 @@ public class PipelineKeys {
 	public static final String SUBLISTITEM = "sublistItem"; 
 	public static final String GROUP_BY = "groupby"; 
 	public static final String GROUP = "Group";
-	public static final String GROUPKEY = "group";
+	public static final String GROUPKEY = "groupkey";
 	
 	public static final String DESTINATION_FILE = "destinationFile";	
 }

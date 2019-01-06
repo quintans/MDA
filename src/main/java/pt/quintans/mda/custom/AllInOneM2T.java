@@ -21,13 +21,8 @@ public class AllInOneM2T extends Model2TextAbstract {
 	    // create groups
 	    String groupby = getOptional(PipelineKeys.GROUP_BY);
 	    if(groupby != null) {
-	    	Map<Object, List<Object>> groups = new LinkedHashMap<>();
 	    	pt.quintans.mda.core.Model allModels[] = getFromPipe(PipelineKeys.ALL_MODELS);
-			for (Object obj : allModels[0].getTransformedObjectList(getStereotype())) {
-				Object groupKey = Tools.eval(obj, groupby);
-				List<Object> group = groups.computeIfAbsent(groupKey, k -> new ArrayList<>());
-				group.add(obj);
-			}
+	    	Map<Object, List<Object>> groups = Tools.groupBy(allModels[0].getTransformedObjectList(getStereotype()), groupby);
 			for(Map.Entry<Object, List<Object>> entry : groups.entrySet()) {
 				putInPipe(PipelineKeys.GROUP, entry.getValue());
 				putInPipe(PipelineKeys.GROUPKEY, entry.getKey());

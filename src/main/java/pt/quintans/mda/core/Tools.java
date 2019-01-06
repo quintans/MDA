@@ -289,6 +289,16 @@ public class Tools {
         return e.evaluate(jc);
     }
     
+    public static Map<Object, List<Object>> groupBy(List<Object> objs, String groupby) {
+    	Map<Object, List<Object>> groups = new LinkedHashMap<>();
+		for (Object obj : objs) {
+			Object groupKey = eval(obj, groupby);
+			List<Object> group = groups.computeIfAbsent(groupKey, k -> new ArrayList<>());
+			group.add(obj);
+		}
+		return groups;
+    }
+    
 	public static <T> List<T> duplicateList(List<T> lst){
 		if(lst != null){
 			List<T> tmp = new ArrayList<T>();
